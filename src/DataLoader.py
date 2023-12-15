@@ -134,6 +134,27 @@ class DataLoader(object):
         self.check_dim( dim )
         self.check_eos()
         return list(csvu.get_data_dirs(year=year, eras=eras, dim=dim))
+
+    def get_default_data_dir_per_run( self, year='2017' ):
+        ###
+        # get the default data directory for the data for this project
+        # when searching under directory 'PerRun_UL{year}Data'.
+        #
+        # (note: only relevant for legacy csv approach)
+        # (note: internal helper function, no need to call)
+        # note: this returns the directory where the data is currently stored;
+        #       might change in future reprocessings of the data,
+        # note: default directory are on the /eos file system.
+        #       this function will throw an exception if it does not have access to /eos.
+        # input arguments:
+        # - year: data-taking year, should be '2017' or '2018' so far (default: 2017)
+        #   note: need to provide the dimension at this stage since the files for 1D and 2D histograms
+        #         are stored in different directories.
+        # returns:
+        # a list of directories containing the legacy csv files with the requested data.
+        self.check_year( year )
+        self.check_eos()
+        return csvu.get_data_dir_per_run( year=year )
     
     ### help functions to get csv files from directories
     
@@ -174,16 +195,21 @@ class DataLoader(object):
         # a list of csv files in the given directories.
         return [ f for inputdir in inputdirs for f in self.get_csv_files_in_dir(inputdir, sort=sort) ]
     
-    def get_default_csv_files( self, year='2017', eras=[], dim=1, sort=True ):
-        ### read the csv files from the default directories with input data for this project
+    def get_default_csv_files( self, year='2017', eras=[], dim=1, per_run_channel='', sort=True ):
+        ### read the csv files from the default directories (or directory) with input data for this project
         # (note: only relevant for legacy csv approach)
         # note: default directories are on the /eos file system.
         #       this function will throw an exception if it has not access to /eos.
         # input arguments: 
         # - year, eras, dim: see get_default_data_dirs!
+        # - per_run_channel: Channel as the prefix of CSV files under the 'PerRun_UL{year}_Data' directory.
+        #                    E.g. 'SingleMuon' in '/eos/project/c/cmsml4dc/ML_2020/PerRun_UL2017_Data/SingleMuon_297047_UL2017.csv'
+        #                    When set to empty string (default), search under 'UL{year}_Data' instead.
         # - sort: see get_csv_files_in_dir!
         # returns:
-        # a list of csv files with the data corresponding to the provided year, eras and dimension.
+        # a list of csv files with the data corresponding to the provided year, eras and dimension and per_run_channel.
+        if per_run_channel:
+            return self.get_csv_files_in_dir( self.get_default_data_dir_per_run( year=year ) )
         datadirs = self.get_default_data_dirs( year=year, eras=eras, dim=dim )
         return self.get_csv_files_in_dirs( datadirs, sort=sort )
     
