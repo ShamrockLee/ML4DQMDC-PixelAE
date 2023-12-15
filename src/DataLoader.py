@@ -185,7 +185,7 @@ class DataLoader(object):
         # returns:
         # a list of csv files with the data corresponding to the provided year, eras and dimension.
         datadirs = self.get_default_data_dirs( year=year, eras=eras, dim=dim )
-        return self.get_csv_files_in_dirs( datadirs )
+        return self.get_csv_files_in_dirs( datadirs, sort=sort )
     
     ### functions for reading single files
     
