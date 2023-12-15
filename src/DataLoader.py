@@ -172,11 +172,7 @@ class DataLoader(object):
         # - sort: see get_csv_files_in_dir
         # returns:
         # a list of csv files in the given directories.
-        filelist = []
-        for inputdir in inputdirs:
-            for f in self.get_csv_files_in_dir( inputdir, sort=sort ):
-                filelist.append(f)
-        return filelist
+        return [ f for inputdir in inputdirs for f in self.get_csv_files_in_dir(inputdir, sort=sort) ]
     
     def get_default_csv_files( self, year='2017', eras=[], dim=1, sort=True ):
         ### read the csv files from the default directories with input data for this project
