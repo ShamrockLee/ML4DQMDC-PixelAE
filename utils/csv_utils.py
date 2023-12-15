@@ -14,6 +14,7 @@
 ### imports
 
 # external modules
+import itertools
 import os
 import pandas as pd
 import numpy as np
@@ -129,10 +130,12 @@ def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
         if era=='all': 
             thiseras = []
             erasuffix = ''
-        datadirs = list(get_data_dirs(year=year,eras=thiseras,dim=dim))
-        csvfiles = []
-        for datadir in datadirs:
-            csvfiles += sort_filenames(list(get_csv_files(datadir)))
+        # itertools.chain.from_iterable(lists) works like sum(lists, start=[]),
+        # but the former is recommended over the latter by Python Doc.
+        # See https://docs.python.org/3/library/itertools.html#itertools.chain
+        # and https://docs.python.org/3/library/functions.html#sum
+        datadirs = get_data_dirs(year=year,eras=thiseras,dim=dim)
+        csvfiles = list(itertools.chain.from_iterable(map(get_csv_files, datadirs)))
         # read histograms into df
         temp = read_and_merge_csv(csvfiles,histnames=histnames)
         # write df to files
