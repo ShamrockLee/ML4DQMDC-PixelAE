@@ -43,6 +43,9 @@ def get_data_dirs(year='2017', eras=[], dim=1):
                   +' does not seem to exist, skipping it and continuing...')
         else: yield eradir
 
+def get_data_dir_per_run(year='2017'):
+    return '/eos/project/c/cmsml4dc/ML_2020/PerRun_UL{year}_Data'.format(year=year)
+
 def get_csv_files(inputdir):
     ### yields paths to all csv files in input directory
     # note that the output paths consist of input_dir/filename
@@ -110,7 +113,7 @@ def read_and_merge_csv(csv_files, histnames=[], runnbs=[]):
     return df
 
 
-def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
+def write_skimmed_csv(histnames, year, eras=['all'], dim=1, per_run_channel=''):
     ### read all available data for a given year/era and make a file per histogram type
     # DEPRECATED, this function might be removed in the future;
     #             see tutorial read_and_write_data.ipynb for equivalent functionality.
@@ -120,6 +123,9 @@ def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
     # - eras: data-taking eras for which to make a separate file (in string format)
     #         use 'all' to make a file with all eras merged, i.e. a full data taking year
     # - dim: dimension of histograms (1 or 2), needed to retrieve the correct folder containing input files
+    # - per_run_channel: Channel as the prefix of CSV files under the 'PerRun_UL{year}_Data' directory.
+    #                    E.g. 'SingleMuon' in '/eos/project/c/cmsml4dc/ML_2020/PerRun_UL2017_Data/SingleMuon_297047_UL2017.csv'
+    #                    When set to empty string (default), search under 'UL{year}_Data' instead.
     # output:
     # - one csv file per year/era and per histogram type
     # note: this function can take quite a while to run!
@@ -130,16 +136,23 @@ def write_skimmed_csv(histnames, year, eras=['all'], dim=1):
         if era=='all': 
             thiseras = []
             erasuffix = ''
-        # itertools.chain.from_iterable(lists) works like sum(lists, start=[]),
-        # but the former is recommended over the latter by Python Doc.
-        # See https://docs.python.org/3/library/itertools.html#itertools.chain
-        # and https://docs.python.org/3/library/functions.html#sum
-        datadirs = get_data_dirs(year=year,eras=thiseras,dim=dim)
-        csvfiles = list(itertools.chain.from_iterable(map(get_csv_files, datadirs)))
+        if per_run_channel:
+            datadir = get_data_dir_per_run(year=year)
+            csvfiles = list(get_csv_files(datadir))
+            output_name_format = '{per_run_channel}_{year}_{histname}.csv'
+        else:
+            # itertools.chain.from_iterable(lists) works like sum(lists, start=[]),
+            # but the former is recommended over the latter by Python Doc.
+            # See https://docs.python.org/3/library/itertools.html#itertools.chain
+            # and https://docs.python.org/3/library/functions.html#sum
+            datadirs = get_data_dirs(year=year,eras=thiseras,dim=dim)
+            csvfiles = list(itertools.chain.from_iterable(map(get_csv_files, datadirs)))
+            output_name_format = 'DF{year}{erasuffix}_{histname}.csv'
         # read histograms into df
         temp = read_and_merge_csv(csvfiles,histnames=histnames)
         # write df to files
+        output_name_format1.format(per_run_channel=per_run_channel, year=year, erasuffix=erasuffix)
         for histname in histnames:
             seldf = dfu.select_histnames(temp,[histname])
             histname = histname.replace(' ','_')
-            seldf.to_csv('DF'+year+erasuffix+'_'+histname+'.csv')
+            seldf.to_csv(output_name_format1.format(histname=histname))
