@@ -126,10 +126,11 @@ class DQMIOReader:
     def __init__(self, *files, sortindex=False, sortmes=False, nthreads=4):
         ### initializer
         # open the passed in files and read their index data.
-        # input arguments:
+        # arbitrary positional arguments:
         # - files: a filename (or multiple filenames) to open
         #          if stored locally, the filenames should contain the full path.
         #          if stored on the grid, prefix the file path with "root://cms-xrd-global.cern.ch/".
+        # keyword arguments:
         # - sortindex: bool (default False) whether or not to sort the index
         #              (by run and lumisection number in ascending order).
         # - sortmes: bool (default False) whether or not to sort the ME names
@@ -230,8 +231,9 @@ class DQMIOReader:
     
     def getMEsForLumi(self, runlumi, *namepatterns):
         ### get selected monitoring elements for a given lumisection
-        # input arguments:
+        # positional arguments:
         # - runlumi: a tuple of the form (run number, lumisection number)
+        # arbitrary positional arguments:
         # - namepatterns: a wildcard pattern (or multiple) to select monitoring elements
         # returns:
         # a list of named tuples of type MonitorElement
@@ -352,7 +354,7 @@ class DQMIOReader:
         
     def getMEs(self, *namepatterns):
         ### read monitoring elements matching the given wildcard patterns from all lumis.
-        # input arguments:
+        # arbitrary positional arguments:
         # - namepatterns: a wildcard patterns (or multiple) to select monitoring elements
         # returns:
         # a list of named tuples of type MonitorElement
