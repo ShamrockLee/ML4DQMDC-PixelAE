@@ -123,31 +123,21 @@ class DQMIOReader:
         }
         return treenames[metype]
     
-    def __init__(self, *files, **kwargs):
+    def __init__(self, *files, sortindex=False, sortmes=False, nthreads=4):
         ### initializer
         # open the passed in files and read their index data.
         # input arguments:
         # - files: a filename (or multiple filenames) to open
         #          if stored locally, the filenames should contain the full path.
         #          if stored on the grid, prefix the file path with "root://cms-xrd-global.cern.ch/".
-        # - kwargs: may contain:
-        #   -- sortindex: bool (default False) whether or not to sort the index 
-        #                 (by run and lumisection number in ascending order).
-        #   -- sortmes: bool (default False) whether or not to sort the ME names
-        #               (alphabetically)
-        #   -- nthreads: int (default 4) for number of threads
+        # - sortindex: bool (default False) whether or not to sort the index
+        #              (by run and lumisection number in ascending order).
+        # - sortmes: bool (default False) whether or not to sort the ME names
+        #            (alphabetically)
+        # - nthreads: int (default 4) for number of threads
 
         # check arguments
-        sortindex = False
-        sortmes = False
-        self.nthreads = 4
-        for key,val in kwargs.items():
-            if( key=='sortindex' and val ): sortindex = True
-            elif( key=='sortmes' and val ): sortmes = True
-            elif( key=='nthreads' ): self.nthreads = int(val)
-            else:
-                raise Exception('ERROR in DQMIOReader.__init__:'
-                               +' unrecognized keyword argument "{}"'.format(key))
+        self.nthreads = int(nthreads)
   
         # do the initialization
         print('DQMIOReader.__init__: opening {} files...'.format(len(files)))
