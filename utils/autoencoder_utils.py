@@ -14,7 +14,12 @@
 # external modules
 import numpy as np
 import tensorflow as tf
-from keras import backend as K
+import keras
+if keras.__version__.startswith("2."):
+    from keras import backend as K
+else:
+    # Since Keras 3, Mathematical operation functions are moved under keras.ops.
+    from keras import ops as K
 import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
