@@ -612,14 +612,14 @@ def plot_loss(data,
     
 ### plot an array of mse values and get the mean and std value
 # credits to Francesco for this function
-def plot_mse(mse, rmlargest=0., doplot=True,
+def plot_mse(mse, ls=None, rmlargest=0., doplot=True,
             title=None, xaxtitle='lumisection number', yaxtitle='mse'):
     ### plot the mse's and return the mean and std
     # input args:
     # - mse is a 1D numpy array of mse scores
     # - doplot: boolean whether to make a plot or simply return mean and std
     # - rmlargest: fraction of largest mse's to remove (to avoid being too sensitive to outliers)
-    (obj1,obj2) = plot_distance(mse,rmlargest=rmlargest,doplot=doplot,title=title,xaxtitle=xaxtitle,yaxtitle=yaxtitle)
+    (obj1,obj2) = plot_distance(mse, ls=ls, rmlargest=rmlargest,doplot=doplot,title=title,xaxtitle=xaxtitle,yaxtitle=yaxtitle)
     return (obj1,obj2)
 
 
