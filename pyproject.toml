@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools >= 53.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ML4DQMDC-PixelAE"
+version = "0.2.0"
+authors = [
+    { name = "Luka Lambrecht", email = "Luka.Lambrecht@UGent.be" },
+    { name = "Yueh-Shun Li", email = "shamrocklee@posteo.net" },
+]
+description = "collection of python libraries for ML4DQM-DC studies"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "keras",
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "requests",
+    "six",
+]
+[project.optional-dependencies]
+gif = [
+    # Generate GIF
+    "imageio",
+]
+tensorflow = [
+    # TensorFlow as a Keras backend
+    "tensorflow",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["ml4dqmdc*"]
+exclude = [
+    # Obsolete Jupyter Notebooks which are now Python modules
+    "ml4dqmdc.utils.notebooks_v20211109*",
+]
