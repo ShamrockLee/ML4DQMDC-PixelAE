@@ -17,14 +17,10 @@ import zipfile
 import glob
 import copy
 import numpy as np
-import importlib
 
 # local modules
-import Model
-importlib.reload(Model)
-from Model import Model
-sys.path.append('classifiers')
-from HistogramClassifier import HistogramClassifier
+from ._model import Model
+from .classifiers._histogram_classifier import HistogramClassifier
 
 
 class ModelInterface(Model):

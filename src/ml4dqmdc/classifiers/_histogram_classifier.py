@@ -25,10 +25,8 @@ import os
 import sys
 import numpy as np
 from abc import ABC,abstractmethod
-import importlib
 
 # local modules
-sys.path.append('../../utils')
 
 
 
