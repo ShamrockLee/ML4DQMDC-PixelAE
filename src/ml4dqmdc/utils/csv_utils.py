@@ -17,11 +17,9 @@
 import os
 import pandas as pd
 import numpy as np
-import importlib
 
 # local modules
-import dataframe_utils as dfu
-importlib.reload(dfu)
+from . import dataframe_utils as dfu
 
 
 def get_data_dirs(year='2017', eras=[], dim=1):

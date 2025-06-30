@@ -15,7 +15,7 @@ import os
 import json
 
 # local modules
-import json_utils as jsonu
+from . import json_utils as jsonu
 
 
 

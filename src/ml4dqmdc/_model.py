@@ -21,13 +21,10 @@ import os
 import sys
 import pickle
 import numpy as np
-import importlib
 
 # local modules
-sys.path.append('classifiers')
-sys.path.append('cloudfitters')
-from HistogramClassifier import HistogramClassifier
-from CloudFitter import CloudFitter
+from .classifiers._histogram_classifier import HistogramClassifier
+from .cloudfitters._cloud_fitter import CloudFitter
 
 
 class Model(object):

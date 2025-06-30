@@ -11,11 +11,9 @@
 import sys
 import numpy as np
 import pickle
-import importlib
 
 # local modules
-from HistogramClassifier import HistogramClassifier
-sys.path.append('../../utils')
+from ._histogram_classifier import HistogramClassifier
 
 
 

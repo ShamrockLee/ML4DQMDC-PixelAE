@@ -32,11 +32,9 @@ else:
 # import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
-import importlib
 
 # local modules
-import plot_utils
-importlib.reload(plot_utils)
+from . import plot_utils
 
 
 ### define loss functions

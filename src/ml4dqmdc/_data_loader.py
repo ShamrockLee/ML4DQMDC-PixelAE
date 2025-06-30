@@ -45,12 +45,9 @@
 import os
 import sys
 import pandas as pd
-import importlib
 
 # local modules
-sys.path.append('../utils')
-import csv_utils as csvu
-importlib.reload(csvu)
+from .utils import csv_utils as csvu
 
 
 class DataLoader(object):
