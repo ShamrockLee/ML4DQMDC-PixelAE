@@ -15,11 +15,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
-import importlib
 
 # local modules
-import hist_utils
-importlib.reload(hist_utils)
+from . import hist_utils
 
 
 ### help functions

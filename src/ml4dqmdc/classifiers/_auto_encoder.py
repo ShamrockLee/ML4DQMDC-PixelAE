@@ -17,13 +17,11 @@ import sys
 import numpy as np
 from keras import Model
 from keras.models import load_model
-import importlib
 
 # local modules
-from HistogramClassifier import HistogramClassifier
-sys.path.append('../../utils')
-from autoencoder_utils import mseTop10Raw, mseTop10
-import plot_utils
+from ._histogram_classifier import HistogramClassifier
+from ..utils.autoencoder_utils import mseTop10Raw, mseTop10
+from ..utils import plot_utils
 
 
 

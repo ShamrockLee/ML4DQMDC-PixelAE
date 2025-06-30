@@ -17,11 +17,9 @@ import sys
 import numpy as np
 from scipy.stats import gaussian_kde
 from sklearn.decomposition import PCA
-import importlib
 
 # local modules
-from CloudFitter import CloudFitter
-sys.path.append('../../utils')
+from ._cloud_fitter import CloudFitter
 
 
 class PCAGaussianKdeFitter(CloudFitter):

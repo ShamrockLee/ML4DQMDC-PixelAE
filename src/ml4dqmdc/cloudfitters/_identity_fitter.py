@@ -19,7 +19,7 @@ import numpy as np
 import os
 
 # local modules
-from CloudFitter import CloudFitter
+from ._cloud_fitter import CloudFitter
 
 
 class IdentityFitter(CloudFitter):

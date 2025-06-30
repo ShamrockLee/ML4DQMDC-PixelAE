@@ -11,13 +11,11 @@ import os
 import sys
 import numpy as np
 import pickle
-import importlib
 
 # local modules
-from HistogramClassifier import HistogramClassifier
-sys.path.append('../../utils')
-from autoencoder_utils import mseTop10Raw, mseTop10
-from hist_utils import histmoments
+from ._histogram_classifier import HistogramClassifier
+from ..utils.autoencoder_utils import mseTop10Raw, mseTop10
+from ..utils.hist_utils import histmoments
 
         
 class MomentClassifier(HistogramClassifier):

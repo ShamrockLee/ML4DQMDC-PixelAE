@@ -15,8 +15,7 @@ import sys
 import numpy as np
 
 # local modules
-from HistogramClassifier import HistogramClassifier
-sys.path.append('../../utils')
+from ._histogram_classifier import HistogramClassifier
 
 
 

@@ -20,9 +20,9 @@ from sklearn.preprocessing import normalize
 import scipy.signal
 
 # local modules
-import dataframe_utils
-import csv_utils
-import plot_utils
+from . import dataframe_utils
+from . import csv_utils
+from . import plot_utils
 
 
 ### cropping of histograms

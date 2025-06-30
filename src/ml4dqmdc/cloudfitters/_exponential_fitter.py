@@ -12,11 +12,9 @@
 # external modules
 import sys
 import numpy as np
-import importlib
 
 # local modules
-from CloudFitter import CloudFitter
-sys.path.append('../../utils')
+from ._cloud_fitter import CloudFitter
 
 
 

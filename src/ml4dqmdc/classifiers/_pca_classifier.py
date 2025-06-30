@@ -15,9 +15,8 @@ import numpy as np
 from sklearn.decomposition import PCA
 
 # local modules
-from HistogramClassifier import HistogramClassifier
-sys.path.append('../../utils')
-from autoencoder_utils import mseTopNRaw, chiSquaredTopNRaw
+from ._histogram_classifier import HistogramClassifier
+from ..utils.autoencoder_utils import mseTopNRaw, chiSquaredTopNRaw
 
 
 
