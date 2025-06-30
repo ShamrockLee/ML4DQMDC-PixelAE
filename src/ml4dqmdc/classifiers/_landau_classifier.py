@@ -15,9 +15,8 @@ import pickle
 import importlib
 
 # local modules
-from HistogramClassifier import HistogramClassifier
-sys.path.append('../../utils')
-from autoencoder_utils import mseTop10Raw, mseTop10
+from ._histogram_classifier import HistogramClassifier
+from ..utils.autoencoder_utils import mseTop10Raw, mseTop10
 
 
 def landaufun(x, landaumax, landauwidth, norm):

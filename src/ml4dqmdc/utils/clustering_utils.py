@@ -16,7 +16,7 @@ import sys
 import numpy as np
 
 # local modules
-from hist_utils import moment
+from .hist_utils import moment
 
 
 

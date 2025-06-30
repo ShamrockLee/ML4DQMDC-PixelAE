@@ -33,18 +33,14 @@ import math
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import importlib
 
 # local modules
-import ModelInterface
-from ModelInterface import ModelInterface
-sys.path.append('classifiers')
-from HistogramClassifier import HistogramClassifier
-sys.path.append('../utils')
-import dataframe_utils as dfu
-import hist_utils as hu
-import json_utils as jsonu
-import plot_utils as pu
+from ._model_interface import ModelInterface
+from .classifiers._histogram_classifier import HistogramClassifier
+from .utils import dataframe_utils as dfu
+from .utils import hist_utils as hu
+from .utils import json_utils as jsonu
+from .utils import plot_utils as pu
 
 
 

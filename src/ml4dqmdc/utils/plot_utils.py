@@ -25,7 +25,6 @@ except:
     print('WARNING: could not set LaTEX rendering for matplotlib.'
           +' Any TEX commands in figure labels might not work as expected.')
     plot_utils_latex_formatting = False
-import importlib
 
 
 ##################

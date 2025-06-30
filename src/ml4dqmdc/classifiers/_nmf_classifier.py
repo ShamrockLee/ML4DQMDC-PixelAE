@@ -19,10 +19,9 @@ from sklearn.decomposition import NMF
 import matplotlib.pyplot as plt
 
 # local modules
-from HistogramClassifier import HistogramClassifier
-sys.path.append('../../utils')
-from autoencoder_utils import mseTopNRaw, chiSquaredTopNRaw
-import plot_utils
+from ._histogram_classifier import HistogramClassifier
+from ..utils.autoencoder_utils import mseTopNRaw, chiSquaredTopNRaw
+from ..utils import plot_utils
 
 
 class NMFClassifier(HistogramClassifier):

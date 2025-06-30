@@ -15,13 +15,11 @@ import os
 import pandas as pd
 import numpy as np
 import json
-import importlib
 import re
 from warnings import warn
 
 # local modules
-import json_utils
-importlib.reload(json_utils)
+from . import json_utils
 
 
 # getter and selector for histogram names 
