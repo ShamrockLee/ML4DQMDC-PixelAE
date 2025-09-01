@@ -32,6 +32,23 @@ import importlib
 # help functions #
 ##################
 
+def gen_increasing_index_from_runsls(runs=None, ls=None):
+    assert (runs is not None) or (ls is not None)
+    length = len(ls) if ls is not None else len(runs)
+    is_bumping = np.empty((length,), dtype=bool)
+    if length:
+        is_bumping[0] = True
+    if runs is not None:
+        assert len(runs) == length
+        is_bumping[1:] = runs[1:] != runs[:-1]
+    else:
+        is_bumping[1:] = ls[1:] <= ls[:-1]
+    if ls is not None:
+        out = ls.copy()
+        out[1:] += np.cumsum(ls[:-1] * is_bumping[1:])
+        return (out, is_bumping)
+    return (np.arange(length), is_bumping)
+
 def make_legend_opaque( leg ):
     ### set the transparency of all entries in a legend to zero
     for lh in leg.legendHandles: 
@@ -547,32 +564,87 @@ def plot_moments(moments, ls, dims=(0,1),
             ax.set_zlabel(zaxtitle, fontsize=zaxtitlesize)
     return (fig,ax)
 
-def plot_distance(dists, ls=None, rmlargest=0., doplot=True,
-                 title=None, xaxtitle='lumisection number', yaxtitle='distance metric'):
-    
-    if ls is None: ls = np.arange(0,len(dists))
-        
+def plot_distance(dists, index=None, runs=None, ls=None, rmlargest=0., doplot=True,
+                 title=None, xaxtitle=None, yaxtitle='distance metric'):
+    # if ls is None: ls = np.arange(0,len(dists))
+
     if rmlargest>0.:
         threshold = np.quantile(dists,1-rmlargest)
-        ls = ls[dists<threshold]
-        dists = dists[dists<threshold]
+        threshold_mask = dists < threshold
+        dists = dists[threshold_mask]
+        if index is not None:
+            index = index[threshold_mask]
+        if runs is not None:
+            runs = runs[threshold_mask]
+        if ls is not None:
+            ls = ls[threshold_mask]
+
+    index_name = "lumisection index" if index is not None else "lumisection serial number"
+    plot_secondary_xaxis = True
+    if runs is not None or ls is not None:
+        index_generated, is_bumping = gen_increasing_index_from_runsls(runs=runs, ls=ls)
+        if index is None:
+            index = index_generated
+    else:
+        plot_secondary_xaxis = False
+        if index is None:
+            index = np.arange(len(dists))
+        if xaxtitle is None:
+            xaxtitle = index_name
+    if ls is not None and not np.any(is_bumping[1:]):
+        if runs is None:
+            plot_secondary_xaxis = False
+            if xaxtitle is None:
+                xaxtitle = "lumisection number"
+        else:
+            index_name="lumisection number"
+
     gmean = dists.mean()
     gstd = dists.std()
-        
-    if not doplot: return (gmean,gstd)
-    
+
+    if not doplot:
+        return (gmean,gstd)
+
     fig,ax = plt.subplots()
     fig.set_size_inches(8, 6)
-    
-    ax.hlines(gmean,ls[0],ls[-1], color='b', label='average: {}'.format(gmean))
-    ax.hlines(gmean+(1.0*gstd), ls[0],ls[-1], color='r', label='1 sigma ({})'.format(gstd))
-    ax.hlines(gmean+(3.0*gstd), ls[0],ls[-1], color='r', label='3 sigma', linestyle=':')
-    
+
+    ax.hlines(gmean, index[0], index[-1], color='b', label='average: {}'.format(gmean))
+    ax.hlines(gmean+(1.0*gstd), index[0], index[-1], color='r', label='1 sigma ({})'.format(gstd))
+    ax.hlines(gmean+(3.0*gstd), index[0], index[-1], color='r', label='3 sigma', linestyle=':')
+
     ax.set_ylim(np.min(dists)*0.9,np.max(dists)*1.1)
-    ax.scatter(ls, dists, marker='+', label='data points')
-    if title is not None: ax.set_title(title)
-    if xaxtitle is not None: ax.set_xlabel(xaxtitle)
-    if yaxtitle is not None: ax.set_ylabel(yaxtitle)
+    ax.scatter(index, dists, marker='+', label='data points')
+    if title is not None:
+        ax.set_title(title)
+    if xaxtitle is not None:
+        ax.set_xlabel(xaxtitle)
+    if yaxtitle is not None:
+        ax.set_ylabel(yaxtitle)
+
+    if plot_secondary_xaxis:
+        sec_xaxis = ax.secondary_xaxis(location=0.)
+        if ls is None and np.all(is_bumping):
+            index_name = "run serial number"
+            sec_xaxis.set_xticks(index[(1, -1)], labels=runs[(1, -1)])
+        else:
+            if runs is not None:
+                runs_tick_labels = [str(runs[0])] + list("%04d" % n for n in runs[is_bumping][1:] % 10000)
+            else:
+                runs_tick_labels = [""] * np.sum(is_bumping)
+            sec_xaxis.set_xticks(index[is_bumping], labels=runs_tick_labels)
+        sec_xaxis.tick_params("x", length=20)
+        if xaxtitle is None:
+            if ls is None:
+                xaxtitle = "run number and {}".format(index_name)
+            elif runs is None:
+                xaxtitle = "{} grouped by runs".format(index_name)
+            else:
+                xaxtitle = "run number and {}".format(index_name)
+        sec_xaxis.set_xlabel(xaxtitle)
+    else:
+        if xaxtitle is not None:
+            ax.set_xlabel(xaxtitle)
+
     ax.legend()
     plt.show()
     return (fig,ax)
@@ -612,14 +684,16 @@ def plot_loss(data,
     
 ### plot an array of mse values and get the mean and std value
 # credits to Francesco for this function
-def plot_mse(mse, rmlargest=0., doplot=True,
-            title=None, xaxtitle='lumisection number', yaxtitle='mse'):
+def plot_mse(mse, index=None, runs=None, ls=None, rmlargest=0., doplot=True,
+            title=None, xaxtitle=None, yaxtitle='MSE'):
     ### plot the mse's and return the mean and std
     # input args:
     # - mse is a 1D numpy array of mse scores
     # - doplot: boolean whether to make a plot or simply return mean and std
     # - rmlargest: fraction of largest mse's to remove (to avoid being too sensitive to outliers)
-    (obj1,obj2) = plot_distance(mse,rmlargest=rmlargest,doplot=doplot,title=title,xaxtitle=xaxtitle,yaxtitle=yaxtitle)
+    (obj1,obj2) = plot_distance(
+        mse, index=index, runs=runs, ls=ls, rmlargest=rmlargest, doplot=doplot,
+        title=title, xaxtitle=xaxtitle, yaxtitle=yaxtitle)
     return (obj1,obj2)
 
 
