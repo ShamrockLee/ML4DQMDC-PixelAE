@@ -10,7 +10,7 @@ In more detail:
 - Furthermore, the idea is to train a separate classifier on each histogram type, and then combine the output scores in some way. Using instead only one histogram type is of course also possible (examples are present in the tutorials). Combining histograms in different ways (e.g. appending them together and training an autoencoder on the result) is not explicitly supported yet, though many parts of the code should still be perfectly usable.
 
 
-### Structure of this repository
+## Structure of this repository
 There are six important directories: `dqmio`, `tutorials`, `utils`, `src`, `runswan` and `omsapi`.
 The other directories in the repository contain either data or meta-information (e.g. for documentation).
 In more detail (in order of most likely appearance):
@@ -32,7 +32,7 @@ Note 2: The difficulties with using the nanoDQMIO files directly are:
 - `omsapi`: standalone API for retrieving information from OMS.
 
 
-### Tutorials
+## Tutorials
 Some tutorials are located in the tutorials folder in this repository, that should help you get started with the code. They can be grouped into different steps:
 
 - Put the data in a more manageable format. This step is no longer needed if you start from the (nano)DQMIO files and if you have prepared the data with the scripts in the `dqmio` folder of this repository. If you start from the legacy csv files however, follow these steps. The raw csv files that are (were) our common input are not very easy to work with. Therefore you would probably first want to do something similar to what's done in the notebook `read_and_write_data.ipynb`. See the code and inline comments in that script and the functions it refers to for more detailed explanation. Its output is one single csv file per histogram type and per year, which is often much more convenient than the original csv files (which contain all histogram types together and are split per number of lines, not per run). All other functions and notebooks presuppose this first step.
@@ -42,24 +42,24 @@ Some tutorials are located in the tutorials folder in this repository, that shou
 - Finally, `global_combined_training.ipynb` shows a more complete example of training a model on several histogram types and combine the output.
 
 
-### Graphical interface
+## Graphical interface
 See more info in the dedicated README in the corresponding folder.
 
 
-### Other remarks
+## Other remarks
 - The repository contains no data files. I was planning to put some example data files in a data folder, but the files are too big for github. You can produce your own input files starting from the (new) nanoDQMIO or the (legacy) csv files as explained above. Another way to get started is to get some example files from my [CERNBox](https://cernbox.cern.ch/index.php/s/E9GzJ4WMZs3jbPd)
 - Disclaimer: the whole repository is still in development stage. Feel free to contact me (at [luka.lambrecht@cern.ch](luka.lambrecht@cern.ch)) in case you found bugs or if you have other suggestions.
 
 
-### To get the tutorial notebooks running in SWAN
-#### (preferred method):
+## To get the tutorial notebooks running in SWAN
+### (preferred method):
 
 - Log in to SWAN.
 - Go to Projects.
 - Click the cloud icon that says 'Download Project from git'
 - Paste the following url: [https://github.com/LukaLambrecht/ML4DQM-DC.git](https://github.com/LukaLambrecht/ML4DQM-DC.git).
 
-#### (alternative method):
+### (alternative method):
 
 - Log in to SWAN.
 - Click on the leftmost icon on the top right ('new terminal').
@@ -69,7 +69,7 @@ See more info in the dedicated README in the corresponding folder.
 - The folder should now be where you cloned it, and you can open and run the notebooks in it in SWAN.
 
 
-### Further documentation
+## Further documentation
 
 - Documentation for all the class definitions and functions in the relevant code directories can be found [here](https://lukalambrecht.github.io/ML4DQMDC-PixelAE/). The documentation is generated automatically from annotations in the source code, so the formatting might behave oddly in some cases.
 - Note that the website above does not include documentation for the tutorials (yet?). However, some comments in the tutorial notebooks should provide (enough?) explanation to follow along.
