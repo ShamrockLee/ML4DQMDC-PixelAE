@@ -270,7 +270,7 @@ def fourier_noise_on_mean(hists, outfilename='', nresamples=0, nonnegative=True,
     return (reshists, fig, axs)
 
 
-def fourier_noise(hists, outfilename='', nresamples=1, nonnegative=True, stdfactor=15., doplot=True, rng=None):
+def fourier_noise(hists, outfilename='', nresamples=1, nonnegative=True, stdfactor=15., doshuffle=True, doplot=True, rng=None):
     ### apply fourier noise on random histograms with simple flat amplitude scaling.
     # input args: 
     # - hists: numpy array of shape (nhists,nbins) used for seeding
@@ -298,7 +298,8 @@ def fourier_noise(hists, outfilename='', nresamples=1, nonnegative=True, stdfact
             reshists[nresamples*i+j,:] = hists[i,:] + goodnoise(nbins, hists[i,:]/stdfactor, rng=rng)
     if nonnegative:
         reshists = np.where(reshists>0,reshists,0)
-    rng.shuffle(reshists)
+    if doshuffle:
+        rng.shuffle(reshists)
 
     # plot examples of good and bad histograms
     fig = None
@@ -322,7 +323,7 @@ def fourier_noise(hists, outfilename='', nresamples=1, nonnegative=True, stdfact
     return (reshists, fig, axs)
 
 
-def upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., doplot=True, rng=None):
+def upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., doshuffle=True, doplot=True, rng=None):
     ### wrapper for fourier_noise allowing for a fixed target number of histograms instead of a fixed resampling factor.
     # useful function for quickly generating a fixed number of resampled histograms,
     # without bothering too much about what exact resampling technique or detailed settings would be most appropriate.
@@ -341,7 +342,7 @@ def upsample_hist_set(hists, ntarget=-1, fourierstdfactor=15., doplot=True, rng=
     nresamples = max(1,int(float(ntarget)/len(hists)))    
     (hists_ext, fig, axs) = fourier_noise(hists, nresamples=nresamples, 
                                           nonnegative=True, stdfactor=fourierstdfactor, 
-                                          doplot=doplot, rng=rng)
+                                          doshuffle=doshuffle, doplot=doplot, rng=rng)
     return (hists_ext, fig, axs)
 
 
