@@ -42,23 +42,45 @@ importlib.reload(plot_utils)
 
 ### define loss functions
 
-def mseTop10(y_true, y_pred):
+def topN(y, n, allow_smaller=False):
+    ### Top n elements from a keras tensor.
+    # Input arguments:
+    # - y: array or keras tensor to get elements from.
+    # - n: number of elements to get.
+    # - allow_smaller: whether to allow last-axis length of y to be smaller than n.
+    #   If allow_smaller is True and smaller y encountered, return the input y.
+    # Output:
+    # Like keras.ops.top_k, it finds N largest elements along the first dimension.
+    # For y of shape (n_sample, n_bin), the output tensor is of shape (n, n_bin).
+    if keras.__version__.startswith("2."):
+        size = K.tf.size
+        top_k = K.tf.math.top_k
+    else:
+        size = ops.size
+        top_k = ops.top_k
+    # y = ops.reshape(y, (-1,))
+    def topNImpl():
+        values, indices = top_k(y, k=n, sorted=True)
+        return values
+    if allow_smaller:
+        return ops.cond(ops.shape(y)[-1] < n, lambda: y, topNImpl)
+    return topNImpl()
+
+def mseTop10(y_true, y_pred, allow_smaller=False):
     ### MSE top 10 loss function for autoencoder training
     # Input arguments:
     # - y_true and y_pred: two Keras tensors of equal shape,
     #   typically a histogram and its autoencoder reconstruction.
     #   If the tensors have more than one dimensions,
     #   perform the operation along the last axis.
+    # - allow_smaller (default to False): Whether to allow
+    #   len(y_true) or len(y_pred) be smaller than 10.
     # Output:
     # - Mean squared error between y_true and y_pred along the last axis,
     #   where only the 10 elements with largest squared error are taken into account.
     #   If y_true and y_pred are 2D tensors with shape `(nhists, nbins)`,
     #   this function returns 1D tensor with shape `(nhists,)` (mseTop10 for each histogram).
-    if keras.__version__.startswith("2."):
-        top_k = K.tf.math.top_k
-    else:
-        top_k = ops.top_k
-    top_values, _ = top_k(ops.square(y_pred - y_true), k=10, sorted=True)
+    top_values = topN(ops.square(y_pred - y_true), n=10, allow_smaller=allow_smaller)
     mean=ops.mean(top_values, axis=-1)
     return mean
 
