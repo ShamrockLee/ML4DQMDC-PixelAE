@@ -66,23 +66,29 @@ def topN(y, n, allow_smaller=False):
         return ops.cond(ops.shape(y)[-1] < n, lambda: y, topNImpl)
     return topNImpl()
 
-def mseTop10(y_true, y_pred, allow_smaller=False):
-    ### MSE top 10 loss function for autoencoder training
+def mseTopN(y_true, y_pred, n, allow_smaller=False):
+    ### MSE top n loss function for autoencoder training
     # Input arguments:
     # - y_true and y_pred: two Keras tensors of equal shape,
     #   typically a histogram and its autoencoder reconstruction.
     #   If the tensors have more than one dimensions,
     #   perform the operation along the last axis.
+    # - n: number of largest elements to keep for averaging
     # - allow_smaller (default to False): Whether to allow
-    #   len(y_true) or len(y_pred) be smaller than 10.
+    #   len(y_true) or len(y_pred) be smaller than n.
     # Output:
     # - Mean squared error between y_true and y_pred along the last axis,
-    #   where only the 10 elements with largest squared error are taken into account.
+    #   where only the n elements with largest squared error are taken into account.
     #   If y_true and y_pred are 2D tensors with shape `(nhists, nbins)`,
     #   this function returns 1D tensor with shape `(nhists,)` (mseTop10 for each histogram).
-    top_values = topN(ops.square(y_pred - y_true), n=10, allow_smaller=allow_smaller)
+    top_values = topN(ops.square(y_pred - y_true), n=n, allow_smaller=allow_smaller)
     mean=ops.mean(top_values, axis=-1)
     return mean
+
+def mseTop10(y_true, y_pred, allow_smaller=False):
+    ### MSE top 10 loss function for autoencoder training
+    # Special case of mseTopN().
+    return mseTopN(y_true, y_pred, n=10, allow_smaller=allow_smaller)
 
 def mseTop10Raw(y_true, y_pred):
     ### mseTop10 but for NumPy arrays
