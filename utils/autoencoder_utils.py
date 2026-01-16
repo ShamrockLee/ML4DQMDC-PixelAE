@@ -434,7 +434,7 @@ def get_wp_maxauc(scores, labels, doplot=False):
 
 ### getting a keras model ready for training with minimal user inputs
 
-def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10,seed=None):
+def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10,metrics=None,seed=None):
     ### get a trainable autoencoder model
     # input args:
     # - input_size: size of vector that autoencoder will operate on
@@ -472,7 +472,7 @@ def getautoencoder(input_size,arch,act=None,opt='adam',loss=mseTop10,seed=None):
     for i,l in enumerate(layers):
         #l.name = 'layer_'+str(i)
         autoencoder.add(l)
-    autoencoder.compile(optimizer=opt, loss=loss)
+    autoencoder.compile(optimizer=opt, loss=loss, metrics=metrics)
     autoencoder.summary()
     return autoencoder
 
