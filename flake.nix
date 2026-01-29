@@ -32,6 +32,33 @@
         };
       in
       {
+        packages = {
+          apptainer-image-python-for-jobs = pkgs.singularity-tools.buildImage {
+            name = "apptainer-image-python-for-jobs";
+            singularity = pkgs.apptainer;
+            diskSize = 12288;
+            memSize = 4096;
+            contents = (with pkgs; [
+              bash
+              coreutils
+              findutils
+              # MiKTeX is a minimal LaTeX implementation (contrast to TeX Live).
+              # It provide bin/latex for MatPlotLib to render text,
+              # needed sometimes even when no text is specified.
+              miktex
+              parallel
+            ])
+            ++ [
+              (python3-ml4dqmdc-pixelae.withPackages (ps: with ps;
+                (lib.concatLists (
+                  lib.attrValues ml4dqmdc-pixelae.optional-dependencies
+                ))
+                ++ ml4dqmdc-pixelae.dependencies
+                ++ [ ml4dqmdc-pixelae ]
+              ))
+            ];
+          };
+        };
         checks = {
           ml4dqmdc-pixelae-python3 = python3-ml4dqmdc-pixelae.pkgs.ml4dqmdc-pixelae;
         };
