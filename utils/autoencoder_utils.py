@@ -44,14 +44,16 @@ importlib.reload(plot_utils)
 
 def mseTop10(y_true, y_pred):
     ### MSE top 10 loss function for autoencoder training
-    # input arguments:
-    # - y_true and y_pred: two numpy arrays of equal shape,
+    # Input arguments:
+    # - y_true and y_pred: two Keras tensors of equal shape,
     #   typically a histogram and its autoencoder reconstruction.
-    #   if two-dimensional, the arrays are assumed to have shape (nhists,nbins)!
-    # output:
-    # - mean squared error between y_true and y_pred,
-    #   where only the 10 bins with largest squared error are taken into account.
-    #   if y_true and y_pred are 2D arrays, this function returns 1D array (mseTop10 for each histogram)
+    #   If the tensors have more than one dimensions,
+    #   perform the operation along the last axis.
+    # Output:
+    # - Mean squared error between y_true and y_pred along the last axis,
+    #   where only the 10 elements with largest squared error are taken into account.
+    #   If y_true and y_pred are 2D tensors with shape `(nhists, nbins)`,
+    #   this function returns 1D tensor with shape `(nhists,)` (mseTop10 for each histogram).
     if keras.__version__.startswith("2."):
         top_k = K.tf.math.top_k
     else:
@@ -61,11 +63,15 @@ def mseTop10(y_true, y_pred):
     return mean
 
 def mseTop10Raw(y_true, y_pred):
-    ### same as mseTop10 but without using tf or K
-    # the version including tf or K seemed to cause randomly dying kernels, no clear reason could be found,
+    ### mseTop10 but for NumPy arrays
+    # Verified that it gives equivalent output as the function above on some random arrays.
+    # Contrary to mseTop10, this function only works for arrays with 2D shapes (so shape (nhists, nbins)), not for (nbins,).
+    #
+    # In keras 3, Keras evaluates lazily by default,
+    # and functions for Keras tensors and functions for NumPy arrays are not directly interoptable.
+    #
+    # In keras 2, the version including tf or K seemed to cause randomly dying kernels, no clear reason could be found,
     # but it was solved using this loss function instead.
-    # verified that it gives exactly the same output as the function above on some random arrays.
-    # contrary to mseTop10, this function only works for arrays with 2D shapes (so shape (nhists,nbins)), not for (nbins,).
     sqdiff = np.power(y_true-y_pred,2)
     sqdiff[:,::-1].sort()
     sqdiff = sqdiff[:,:10]
