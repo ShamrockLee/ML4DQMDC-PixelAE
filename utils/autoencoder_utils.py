@@ -66,6 +66,17 @@ def topN(y, n, allow_smaller=False):
         return ops.cond(ops.shape(y)[-1] < n, lambda: y, topNImpl)
     return topNImpl()
 
+def topNRaw(y, n, inplace=False, allow_smaller=False):
+    if not inplace:
+        y = y.copy()
+    if allow_smaller and y.shape[-1] < n:
+        result = y
+    else:
+        result = np.partition(y, -n)[..., -n:]
+    if sorted:
+        result.sort(axis=-1)
+    return result
+
 def mseTopN(y_true, y_pred, n, allow_smaller=False):
     ### MSE top n loss function for autoencoder training
     # Input arguments:
