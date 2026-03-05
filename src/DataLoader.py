@@ -161,7 +161,8 @@ class DataLoader(object):
                      +' something went wrong in numerical sorting the filenames,'
                      +' maybe the format of the filenames is not as expected?'
                      +' the returned list of files should be complete,'
-                     +' but they might not be sorted correctly.')
+                     +' but they might not be sorted correctly.',
+                     file=sys.stderr)
         return filelist
     
     def get_csv_files_in_dirs( self, inputdirs, sort=True ):
@@ -209,7 +210,7 @@ class DataLoader(object):
         #   (default: keep all MEs present in the input file).
         # - sort: whether to sort the dataframe by run and lumisection number
         #   (note: requires keys 'fromrun' and 'fromlumi' to be present in the dataframe).
-        # - verbose: whether to print info messages.
+        # - verbose: whether to print info messages to stderr.
         # returns:
         # a pandas dataframe
         
@@ -222,7 +223,7 @@ class DataLoader(object):
         if verbose:
             msg = 'INFO in DataLoader.get_dataframe_from_file:'
             msg += ' loading dataframe from file {}...'.format(dfile)
-            print(msg)
+            print(msg, file=sys.stderr)
         # get the file extension
         ext = os.path.splitext(dfile)[1]
         # load the file into a dataframe
@@ -237,7 +238,7 @@ class DataLoader(object):
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_file:'
                 msg += ' selecting monitoring elements {}...'.format(menames)
-                print(msg)
+                print(msg, file=sys.stderr)
             df = df[df[menamecolumn].isin(menames)]
             df.reset_index(drop=True, inplace=True)
         # do sorting if requested
@@ -245,7 +246,7 @@ class DataLoader(object):
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_file:'
                 msg += ' sorting the dataframe...'
-                print(msg)
+                print(msg, file=sys.stderr)
             df.sort_values(by=[runcolumn, lumicolumn], inplace=True)
             df.reset_index(drop=True, inplace=True)
         # rename columns if requested
@@ -253,13 +254,13 @@ class DataLoader(object):
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_file:'
                 msg += ' renaming colums...'
-                print(msg)
+                print(msg, file=sys.stderr)
             df.rename(mapper=renamecolumns, axis='columns', inplace=True)
         # do some more printouts if requested
         if verbose:
             msg = 'INFO in DataLoader.get_dataframe_from_file:'
             msg += ' loaded a dataframe with {} rows and {} columns.'.format(len(df), len(df.columns))
-            print(msg)
+            print(msg, file=sys.stderr)
         return df
 
     def get_dataframe_from_legacy_file( self, dfile, **kwargs ):
@@ -308,7 +309,7 @@ class DataLoader(object):
         #   (default: keep all MEs present in the input file).
         # - sort: whether to sort the dataframe by run and lumisection number
         #   (note: requires keys 'fromrun' and 'fromlumi' to be present in the dataframe).
-        # - verbose: whether to print info messages.
+        # - verbose: whether to print info messages to stderr.
         # returns:
         # a pandas dataframe
         
@@ -322,14 +323,14 @@ class DataLoader(object):
         if verbose:
             msg = 'INFO in DataLoader.get_dataframe_from_files:'
             msg += ' reading and merging {} files...'.format(len(dfiles))
-            print(msg)
+            print(msg, file=sys.stderr)
         # loop over files
         dflist = []
         for i,dfile in enumerate(dfiles):
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_files:'
                 msg += ' now processing file {} of {}...'.format(i+1, len(dfiles))
-                print(msg)
+                print(msg, file=sys.stderr)
             # read dataframe for this file
             df = self.get_dataframe_from_file( dfile, menames=menames, sort=False, verbose=verbose,
                    runcolumn=runcolumn, lumicolumn=lumicolumn, menamecolumn=menamecolumn )
@@ -338,14 +339,14 @@ class DataLoader(object):
         if verbose:
             msg = 'INFO in DataLoader.get_dataframe_from_files:'
             msg += ' merging the dataframes...'
-            print(msg)
+            print(msg, file=sys.stderr)
         df = pd.concat(dflist,ignore_index=True)
         # do sorting if requested
         if sort:
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_files:'
                 msg += ' sorting the dataframe...'
-                print(msg)
+                print(msg, file=sys.stderr)
             df.sort_values(by=[runcolumn,lumicolumn],inplace=True)
             df.reset_index(drop=True,inplace=True)
         # rename columns if requested
@@ -353,14 +354,14 @@ class DataLoader(object):
             if verbose:
                 msg = 'INFO in DataLoader.get_dataframe_from_file:'
                 msg += ' renaming colums...'
-                print(msg)
+                print(msg, file=sys.stderr)
             df.rename(mapper=renamecolumns, axis='columns', inplace=True)
         # do some more printouts if requested
         if verbose:
             msg = 'INFO in DataLoader.get_dataframe_from_files:'
             msg += ' loaded a dataframe from {} files'.format(len(dfiles))
             msg += ' with {} rows and {} columns.'.format(len(df), len(df.columns))
-            print(msg)
+            print(msg, file=sys.stderr)
         return df
 
     def get_dataframe_from_legacy_files( self, dfiles, **kwargs ):
@@ -405,7 +406,7 @@ class DataLoader(object):
         # - dfile: file name to write.
         #   currently supported formats: csv, parquet.
         # - overwrite: whether to overwrite if a file with the given name already exists.
-        # - verbose: whether to print info messages.
+        # - verbose: whether to print info messages to stderr.
         
         # check if directory exists and try to create it if not
         dirname = os.path.dirname(dfile)
@@ -414,7 +415,7 @@ class DataLoader(object):
                 msg = 'WARNING in DataLoader.write_dataframe_to_file:'
                 msg += ' the output directory {}'.format(dirname)
                 msg += ' does not exist yet; will try to create it.'
-                print(msg)
+                print(msg, file=sys.stderr)
             try: os.makedirs(dirname)
             except: raise Exception('ERROR in DataLoader.write_dataframe_to_file:'
                                    +' the output directory could not be created.')
@@ -425,7 +426,7 @@ class DataLoader(object):
             msg += ' already exists.'
             if overwrite:
                 msg += ' Overwriting...'
-                print(msg)
+                print(msg, file=sys.stderr)
             else: raise Exception(msg)
         # get the file extension
         ext = os.path.splitext(dfile)[1]
