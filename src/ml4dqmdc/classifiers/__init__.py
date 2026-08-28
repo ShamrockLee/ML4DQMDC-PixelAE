@@ -1,3 +1,7 @@
+__lazy_modules__ = [
+    "._auto_encoder",
+]
+
 from ._auto_encoder import AutoEncoder
 from ._histogram_classifier import HistogramClassifier
 from ._landau_classifier import LandauClassifier

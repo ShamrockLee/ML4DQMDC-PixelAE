@@ -11,6 +11,10 @@
 
 ### imports
 
+__lazy_modules__ = [
+    "keras",
+]
+
 import math
 
 # external modules
